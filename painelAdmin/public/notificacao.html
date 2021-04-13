@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Rancho's Burgers - Notificações</title>
+    <link rel="icon" type="image/png" href="images/logo_icon.png">
+
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+        integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Our Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+        integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+        crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+        integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+        crossorigin="anonymous"></script>
+    <script src="https://use.fontawesome.com/releases/v5.15.1/js/all.js" data-auto-add-css="false"></script>
+    <link href="https://use.fontawesome.com/releases/v5.15.1/css/svg-with-js.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+
+    <!--------------------  firebase ------------------------->
+    <script src="/__/firebase/7.6.1/firebase-app.js"></script>
+    <script src="/__/firebase/7.6.1/firebase-storage.js"></script>
+    <script src="/__/firebase/7.6.1/firebase-firestore.js"></script>
+    <script src="/__/firebase/7.6.1/firebase-auth.js"></script>
+    <script src="/__/firebase/init.js"></script>
+
+    <script src="js/logado.js"></script>
+
+    <script src="https://compressjs.herokuapp.com/compress.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Painel Administrativo</h3>
+            </div>
+            <ul class="list-unstyled components">
+                <li class="treeview active">
+                    <a href="pedidos.html" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-home"></i>
+                        Pedidos
+                    </a>
+                </li>
+                <li class="treeview">
+                    <a href="#categoriaSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-folder-open"></i>
+                        Categorias
+                    </a>
+                    <ul class="collapse list-unstyled" id="categoriaSubmenu">
+                        <li>
+                            <a href="categorias.html">Gerenciar categorias</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a href="#adicionalSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-bacon"></i>
+                        Adicionais
+                    </a>
+                    <ul class="collapse list-unstyled" id="adicionalSubmenu">
+                        <li>
+                            <a href="adicionais.html">Gerenciar adicionais</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a href="#produtoSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-hamburger"></i>
+                        Produtos
+                    </a>
+                    <ul class="collapse list-unstyled" id="produtoSubmenu">
+                        <li>
+                            <a href="produtos.html">Gerenciar produtos</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a href="#appSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-mobile-alt"></i>
+                        App
+                    </a>
+                    <ul class="collapse show" id="appSubmenu">
+                        <li>
+                            <a href="app.html">Gerenciar app</a>
+                        </li>
+                        <!-- 
+                        <li>
+                            <a href="notificacao.html">Enviar notificação</a>
+                        </li> -->
+                    </ul>
+                </li>
+                <!--
+                <li class="treeview">
+                    <a href="#suporteSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-question"></i>
+                        Suporte
+                    </a>
+                    <ul class="collapse list-unstyled" id="suporteSubmenu">
+                        <li>
+                            <a href="contato.html">Contato</a>
+                        </li>
+                    </ul>
+                </li>-->
+                <li>
+                    <a href="#logoutSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </a>
+                    <ul class="collapse list-unstyled" id="logoutSubmenu">
+                        <li>
+                            <a href="#" onclick="deslogar()">Sair</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light" id="imageCardHeader">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" style="background-image: url('images/fundo-madeira.jpg');" class="btn btn-dark">
+                        <i class="fas fa-align-left"></i>
+                    </button>
+                    <div class="form-group">
+                        <p style="font-family: 'Lobster'; font-size: 35px; color: #fff "> Notificações</p>
+                    </div>
+                    <br>
+                </div>
+            </nav>
+
+            <div class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="wrap" style="margin: 0 auto; float: center;">
+                    <div>
+                        <h4 style="font-size: 20px; float: center; color: #000 ;"> Enviar Notificações para todos os usuarios</h4>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="tituloNotificacao"> <span class="glyphicon glyphicon-eye-open">  </span> Titulo notificação: </label>
+						<input type="text" class="form-control" id="tituloNotificacao"  onkeydown="proximoInput('mensagemNotificacao',event)"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="mensagemNotificacao"> <span class="glyphicon glyphicon-eye-open">  </span> Mensagem notificação: </label>
+						<input type="text" class="form-control" id="mensagemNotificacao" onkeydown="proximoInput('buttonEnviar',event)" />
+                    </div>
+                    <br>
+                    <button type="submit" id="buttonEnviar" style="background-image: url('images/fundo-madeira.jpg');" class="btn btn-dark btn-block" onclick="validarCamposNotificacao()"> Enviar Notificação</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery CDN - Slim version (=without AJAX) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+
+    <script src="js/notificacao.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            })
+        })
+    </script>
+</body>
+
+</html>
