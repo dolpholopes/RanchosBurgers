@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:gravity="center"
+    android:padding="10dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textView_item_pedidoDados"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Teste"
+        android:textSize="15sp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textView_item_pedidoData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="12/09/2021"
+        android:textSize="15sp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textView_item_pedidoStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Finalizado"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="15sp"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textView_item_pedidoValor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="R$ 32,00"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimaryDark"/>
+
+
+</LinearLayout>

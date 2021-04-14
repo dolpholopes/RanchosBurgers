@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "57980086267",
+    "project_id": "ranchos-burgers",
+    "storage_bucket": "ranchos-burgers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57980086267:android:b788542fbfb505af7f8d5e",
+        "android_client_info": {
+          "package_name": "com.rlsistemas.ranchosburgers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "57980086267-r4435i6jhl8k04joc5ckjrc5jpu99501.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rlsistemas.ranchosburgers",
+            "certificate_hash": "6830e9f6408e1c4fa084152f49936c4170b26b3c"
+          }
+        },
+        {
+          "client_id": "57980086267-db6j9e44ud35hu0om1t03dbit3f6560c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGGOjjynIp3xKvD9yaMfTZx4rvpinF5a4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "57980086267-db6j9e44ud35hu0om1t03dbit3f6560c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

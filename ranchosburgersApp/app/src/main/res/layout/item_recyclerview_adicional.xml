@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="15dp"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkbox_item_adicionalCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/colorPrimaryDark"
+            app:buttonTint="@color/colorPrimaryDark"
+            android:clickable="false"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textView_item_adicionalNome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingLeft="20dp"
+            android:text="Bacon"
+            android:gravity="end"
+            android:textSize="15sp"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textView_item_adicionalValor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="R$ 12.00"
+            android:gravity="end"
+            android:textSize="15sp"/>
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#6F707070"
+        android:padding="8dp"/>
+
+</LinearLayout>

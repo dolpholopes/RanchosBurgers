@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_pedidos"
+            android:icon="@drawable/ic_menu_lateral_pedido_24"
+            android:title="Meus Pedidos" />
+        <item
+            android:id="@+id/nav_deslogar"
+            android:icon="@drawable/ic_menu_lateral_deslogar_24"
+            android:title="Deslogar" />
+    </group>
+    <item android:title="Desenvolvedor">
+        <menu>
+            <item
+                android:id="@+id/nav_desenvolvedor"
+                android:icon="@drawable/ic_menu_lateral_desenvolvedor_24"
+                android:title="Rodolpho Lopes"/>
+        </menu>
+    </item>
+
+</menu>

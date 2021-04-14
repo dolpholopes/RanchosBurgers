@@ -329,8 +329,8 @@ function limparCampos() {
 }
 
 function abrirCampos() {
-	document.getElementById("clienteTituloNotificacao").value = "Paris Bistrô Delivery"
-	document.getElementById("clienteMensagemNotificacao").value = "Seu pedido saiu para entrega!! Aguarde alguns minutos."
+	document.getElementById("clienteTituloNotificacao").value = "Rancho's Burgers Delivery"
+	document.getElementById("clienteMensagemNotificacao").value = "Seu pedido saiu para entrega. Aguarde!"
 }
 
 
