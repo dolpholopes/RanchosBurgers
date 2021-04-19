@@ -26,7 +26,7 @@
                 android:id="@+id/imageView_detalhes_produto"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:src="@drawable/logo_branca" />
+                android:src="@drawable/logo_com_fundo" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView_detalhes_produtoNome"

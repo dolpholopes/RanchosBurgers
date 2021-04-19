@@ -67,7 +67,7 @@ public class FirebaseServe extends FirebaseMessagingService {
 
                 String canal = getString(R.string.default_notification_channel_id);
                 NotificationCompat.Builder notificacao = new NotificationCompat.Builder(getBaseContext(),canal)
-                        .setSmallIcon(R.drawable.logo_branca)
+                        .setSmallIcon(R.drawable.logo_com_fundo)
                         .setContentTitle(titulo)
                         .setContentText(mensagem)
                         .setLargeIcon(resource)
@@ -95,7 +95,7 @@ public class FirebaseServe extends FirebaseMessagingService {
 
         String canal = getString(R.string.default_notification_channel_id);
         NotificationCompat.Builder notificacao = new NotificationCompat.Builder(getBaseContext(),canal)
-                .setSmallIcon(R.drawable.logo_branca)
+                .setSmallIcon(R.drawable.logo_com_fundo)
                 .setContentTitle(titulo)
                 .setContentText(mensagem)
                 .setSound(som)

@@ -22,7 +22,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:padding="10dp"
-            android:src="@drawable/logo_branca"
+            android:src="@drawable/logo_com_fundo"
             android:id="@+id/imageView_item_produtoImagem"/>
 
         <LinearLayout

@@ -14,7 +14,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RanchosBurgers">
-        <activity android:name=".activities.MainActivity"
+
+        <activity
+            android:name=".activities.PagarCartaoCreditoActivity"
+            android:theme="@style/AppThemNoActionBar" />
+
+        <activity
+            android:name=".activities.MainActivity"
             android:theme="@style/AppThemNoActionBar" />
         <activity
             android:name=".activities.RetirarLocalActivity"
@@ -67,7 +73,6 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
-
 
         <provider
             android:name="androidx.core.content.FileProvider"

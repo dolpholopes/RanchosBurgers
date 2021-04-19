@@ -48,6 +48,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -79,6 +80,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
     int taxaDeEntrega = 2;
 
+    private Button button_pagarAgoraCartao;
     private Button button_pagarPessoalmenteCartao;
     private Button button_pagarPessoalmenteDinheiro;
 
@@ -101,9 +103,11 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         editText_contato.addTextChangedListener(MaskEditText.mask(editText_contato, "(##)#####-####"));
         editText_contato.setFilters(new InputFilter[]{new InputFilter.LengthFilter(14)});
 
+        button_pagarAgoraCartao = findViewById(R.id.button_pedidoReceber_pagarAgoraCartao);
         button_pagarPessoalmenteCartao = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteCartao);
         button_pagarPessoalmenteDinheiro = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteDinheiro);
 
+        button_pagarAgoraCartao.setOnClickListener(this);
         button_recuperarDadosUsuario.setOnClickListener(this);
         button_pagarPessoalmenteCartao.setOnClickListener(this);
         button_pagarPessoalmenteDinheiro.setOnClickListener(this);
@@ -134,6 +138,10 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         switch (v.getId()){
             case R.id.button_pedidoReceber_carregarDadosUsuario:
                 buttonCarregarDadosUsuario();
+                break;
+
+            case R.id.button_pedidoReceber_pagarAgoraCartao:
+                buttonPagarCartao();
                 break;
 
             case R.id.button_pedidoReceber_pagarPessoalmenteCartao:
@@ -174,6 +182,63 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             public void onFailure(@NonNull Exception e) {
                 dialogProgress.dismiss();
                 Toast.makeText(getBaseContext(), "Erro ao recuperar os dados", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void buttonPagarCartao(){
+
+        String nome = editText_nome.getText().toString();
+        String contato = editText_contato.getText().toString();
+        String endereco = editText_endereco.getText().toString();
+        String referencia = editText_referencia.getText().toString();
+
+        if( nome.trim().isEmpty() || contato.trim().isEmpty() || endereco.trim().isEmpty() || referencia.trim().isEmpty() ){
+            Toast.makeText(getBaseContext(),"Preencha os dados para entrega",Toast.LENGTH_LONG).show();
+        }else{
+            if (Util.statusInternet_MoWi(getBaseContext())){
+                salvarDadosUsuarioPagamentoCartaoFirebase(nome,contato,endereco, referencia);
+            }else{
+                Toast.makeText(getBaseContext(),"Sem conexão com a internet",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
+    private void salvarDadosUsuarioPagamentoCartaoFirebase(String nome,String contato, String endereco, String referencia){
+        DialogProgress dialogProgress = new DialogProgress();
+        dialogProgress.show(getSupportFragmentManager(),"1");
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        HashMap<String,Object> dadosUsuarios = new HashMap<>();
+
+        dadosUsuarios.put("nome",nome);
+        dadosUsuarios.put("contato",contato);
+        dadosUsuarios.put("endereco",endereco);
+        dadosUsuarios.put("referencia",referencia);
+
+        DocumentReference reference = firestore.collection("usuarios").document(uid);
+
+        reference.set(dadosUsuarios).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                dialogProgress.dismiss();
+                if(task.isSuccessful()){
+
+                    Intent intent = new Intent(getBaseContext(),PagarCartaoCreditoActivity.class);
+
+                    intent.putExtra("nome",nome);
+                    intent.putExtra("contato",contato);
+                    intent.putExtra("endereco",endereco +" - "+referencia);
+                    startActivity(intent);
+
+                    //  obterToken(nome, contato, endereco, referencia);
+                }else{
+                    Toast.makeText(getBaseContext(),"Erro ao Salvar Dados: "+task.getException().toString(),Toast.LENGTH_LONG).show();
+                    finish();
+                }
             }
         });
     }
@@ -416,7 +481,8 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             outputStream = new FileOutputStream(pdf);
         }
 
-        Document document = new Document();
+        Rectangle rectangle = new Rectangle(250,800);
+        Document document = new Document(rectangle,5, 5, 5, 5);
 
         PdfCreator pdfCreator = new PdfCreator();
 
@@ -427,29 +493,36 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
         document.open();
 
-        String id = "ID Pedido:" + idPedido;
-        String nomeCliente = "\nNome: \n"+nome;
-        String dataPedido = "\nData e Hora: \n"+  Util.dataPedido(data);
+        String id = "\nID Pedido: " + idPedido;
+        String nomeCliente = "\nNome: "+nome;
+        String dataPedido = "\nData e Hora: "+  Util.dataPedido(data);
         String pedido = "\nPedido: \n"+ produtos.replaceAll("<br>","\n");
-        String valorPedido = "\nValor Total: \n"+totalValorProdutos;
+        //String taxaEntrega = "\nTaxa de Entrega: R$ 2,00";
+        String valorPedido = "\nValor Total: "+totalValorProdutos;
 
         Font font = new Font(Font.FontFamily.TIMES_ROMAN,10, Font.NORMAL);
-
-        Paragraph paragraph = new Paragraph("Paris Bistrô Delivery",font);
-        paragraph.setAlignment(Element.ALIGN_CENTER);
-        document.add(paragraph);
+        Font fontTitulo = new Font(Font.FontFamily.TIMES_ROMAN,14, Font.BOLD);
 
         Image image = null;
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getBaseContext().getResources(), R.drawable.logo_branca);
+        Bitmap bitmap = BitmapFactory.decodeResource(getBaseContext().getResources(), R.drawable.logo_com_fundo);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
         bitmap.compress(Bitmap.CompressFormat.JPEG,100,bytes);
         image = Image.getInstance(bytes.toByteArray());
         image.scaleAbsolute(70f,50f);
-        image.setAlignment(Element.ALIGN_RIGHT);
+        image.setAlignment(Element.ALIGN_CENTER);
 
         document.add(image);
+
+        Paragraph paragraph = new Paragraph("Rancho's Burgers",fontTitulo);
+        paragraph.setAlignment(Element.ALIGN_CENTER);
+        document.add(paragraph);
+
+
+        paragraph = new Paragraph("________________________",fontTitulo);
+        paragraph.setAlignment(Element.ALIGN_CENTER);
+        document.add(paragraph);
 
         paragraph = new Paragraph(id,font);
         document.add(paragraph);
@@ -462,6 +535,14 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
         paragraph = new Paragraph(pedido,font);
         document.add(paragraph);
+
+
+        paragraph = new Paragraph("________________________",fontTitulo);
+        paragraph.setAlignment(Element.ALIGN_CENTER);
+        document.add(paragraph);
+
+        //paragraph = new Paragraph(taxaEntrega,font);
+        //document.add(paragraph);
 
         paragraph = new Paragraph(valorPedido,font);
         document.add(paragraph);
@@ -495,7 +576,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             if(pdf == null){ // versao mais nova android
                 intent1.setDataAndType(uri,"application/pdf");
             }else{ // versao mais antiga android
-                Uri uri1 = FileProvider.getUriForFile(getBaseContext(),"com.example.parisbistro",pdf);
+                Uri uri1 = FileProvider.getUriForFile(getBaseContext(),"com.rlsistemas.ranchosburgers",pdf);
                 intent1.setDataAndType(uri1,"application/pdf");
             }
 
@@ -553,7 +634,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
     private String valorTotalProdutos(){
 
-        int taxaEntrega = 2;
+        int taxaEntrega = 0;
 
         double valorTotal = taxaEntrega;
         for (Produto produto: Carrinho.getInstance().getProdutosCarrinho()){
