@@ -78,13 +78,16 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
     private EditText editText_endereco;
     private EditText editText_referencia;
 
-    int taxaDeEntrega = 2;
+    private String taxa;
 
-    private Button button_pagarAgoraCartao;
+    private double taxaDeEntrega = 0;
+
+    //private Button button_pagarAgoraCartao;
     private Button button_pagarPessoalmenteCartao;
     private Button button_pagarPessoalmenteDinheiro;
 
-    private FirebaseFirestore firestore;
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    ;
     private FirebaseAuth auth;
 
     @Override
@@ -93,6 +96,8 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         setContentView(R.layout.activity_pedido_receber_em_casa);
 
         configToolbar();
+
+        //dialogoAlertaTaxa();
 
         button_recuperarDadosUsuario = findViewById(R.id.button_pedidoReceber_carregarDadosUsuario);
         editText_nome = findViewById(R.id.editText_pedidoReceber_usuarioNome);
@@ -103,17 +108,37 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         editText_contato.addTextChangedListener(MaskEditText.mask(editText_contato, "(##)#####-####"));
         editText_contato.setFilters(new InputFilter[]{new InputFilter.LengthFilter(14)});
 
-        button_pagarAgoraCartao = findViewById(R.id.button_pedidoReceber_pagarAgoraCartao);
+        //button_pagarAgoraCartao = findViewById(R.id.button_pedidoReceber_pagarAgoraCartao);
         button_pagarPessoalmenteCartao = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteCartao);
         button_pagarPessoalmenteDinheiro = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteDinheiro);
 
-        button_pagarAgoraCartao.setOnClickListener(this);
+        //button_pagarAgoraCartao.setOnClickListener(this);
         button_recuperarDadosUsuario.setOnClickListener(this);
         button_pagarPessoalmenteCartao.setOnClickListener(this);
         button_pagarPessoalmenteDinheiro.setOnClickListener(this);
 
         firestore = FirebaseFirestore.getInstance();
+        firestore.collection("app").document("taxa").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                taxa = (String) documentSnapshot.getData().get("taxa");
+                taxaDeEntrega = Double.parseDouble(taxa);
+            }
 
+        });
+
+    }
+
+    private void dialogoAlertaTaxa(){
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Atenção!")
+                .setMessage("Será cobrado uma taxa de R$: " + taxaDeEntrega +" no ato do pagamento")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).create();
+        dialog.show();
     }
 
     private void configToolbar() {
@@ -140,9 +165,9 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                 buttonCarregarDadosUsuario();
                 break;
 
-            case R.id.button_pedidoReceber_pagarAgoraCartao:
-                buttonPagarCartao();
-                break;
+            //case R.id.button_pedidoReceber_pagarAgoraCartao:
+            //    buttonPagarCartao();
+            //    break;
 
             case R.id.button_pedidoReceber_pagarPessoalmenteCartao:
                 buttonPagarPessoalmenteCartao();
@@ -159,10 +184,10 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         dialogProgress.show(getSupportFragmentManager(),"1");
 
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        dialogProgress.dismiss();
         firestore.collection("usuarios").document(uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-
                 if (documentSnapshot.exists()){
                     String nome = (String) documentSnapshot.getData().get("nome");
                     String contato = (String) documentSnapshot.getData().get("contato");
@@ -632,11 +657,11 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         dialog.show();
     }
 
+
+
     private String valorTotalProdutos(){
 
-        int taxaEntrega = 0;
-
-        double valorTotal = taxaEntrega;
+        double valorTotal = taxaDeEntrega;
         for (Produto produto: Carrinho.getInstance().getProdutosCarrinho()){
             double valor = Double.valueOf(produto.getValor());
             valorTotal = valorTotal + valor;
@@ -645,6 +670,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         String valorTotalString = decimalFormat.format(valorTotal);
         return valorTotalString;
+
     }
 
 

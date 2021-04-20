@@ -40,6 +40,8 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
     private AdapterRecyclerViewCarrinho adapterRecyclerViewCarrinho;
     private List<Produto> produtos = new ArrayList<Produto>();
 
+    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +121,6 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
         DialogProgress dialogProgress = new DialogProgress();
         dialogProgress.show(getSupportFragmentManager(),"33");
 
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         firestore.collection("app").document("estadoempresa").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {

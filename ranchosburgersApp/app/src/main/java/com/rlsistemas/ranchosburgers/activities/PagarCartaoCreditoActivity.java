@@ -81,6 +81,8 @@ public class PagarCartaoCreditoActivity extends AppCompatActivity {
     private String contato;
     private String endereco;
 
+    private String taxaEntrega = "2";
+
     private FirebaseFirestore firestore;
 
     private String acessToken;
@@ -134,22 +136,10 @@ public class PagarCartaoCreditoActivity extends AppCompatActivity {
 
         JsonObject dados = new JsonObject();
 
-        //PRIMEIRO ITEM
+        //--------------------------------------------------------------------PRIMEIRO ITEM
         JsonArray itemsList = new JsonArray();
         JsonObject item = new JsonObject();
 
-        //SEGUNDO ITEM
-        JsonObject email = new JsonObject();
-
-        //TERCEIRO ITEM
-        JsonObject excluded_payments_types = new JsonObject();
-        JsonArray ids = new JsonArray();
-        JsonObject removerBoleto = new JsonObject();
-        JsonObject removerCartao = new JsonObject();
-        JsonObject removerGift = new JsonObject();
-
-
-        //--------------------------------------------------------------------PRIMEIRO ITEM
         List<Produto> produtos = Carrinho.getInstance().getProdutosCarrinho();
 
         for(Produto produto: produtos){
@@ -167,25 +157,43 @@ public class PagarCartaoCreditoActivity extends AppCompatActivity {
         dados.add("items",itemsList);
 
         //--------------------------------------------------------------------SEGUNDO ITEM
+        JsonObject email = new JsonObject();
         String emailUsuario = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         email.addProperty("email",emailUsuario);
         dados.add("payer",email);
 
         //--------------------------------------------------------------------TERCEIRO ITEM
+        JsonObject excluded_payments_types = new JsonObject();
+        JsonArray ids = new JsonArray();
+        JsonObject removerBoleto = new JsonObject();
+        JsonObject removerCartao = new JsonObject();
+        JsonObject removerGift = new JsonObject();
+
         removerBoleto.addProperty("id","ticket");
         removerGift.addProperty("id","digital_currency");
         removerCartao.addProperty("id","debit_card");
-
 
         ids.add(removerBoleto);
         ids.add(removerCartao);
         ids.add(removerGift);
 
-
         excluded_payments_types.add("excluded_payment_types",ids);
         excluded_payments_types.addProperty("installments",1);
 
         dados.add("payment_methods",excluded_payments_types);
+
+        //--------------------------------------------------------------------QUARTO ITEM
+        JsonArray taxaEntrega = new JsonArray();
+        JsonObject taxa = new JsonObject();
+
+        taxa = new JsonObject();
+        taxa.addProperty("cost", 2);
+
+        taxaEntrega.add(taxa);
+
+        dados.add("shipments", taxaEntrega);
+
+        
 
         criarPreference(dados);
     }
