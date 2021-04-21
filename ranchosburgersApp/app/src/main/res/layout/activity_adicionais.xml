@@ -89,7 +89,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="Escolha até 3 adicionais"
+                android:text="Escolha seus adicionais"
                 android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView

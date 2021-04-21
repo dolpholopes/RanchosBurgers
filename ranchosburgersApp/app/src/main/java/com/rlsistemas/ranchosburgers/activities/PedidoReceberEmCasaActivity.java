@@ -79,10 +79,8 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
     private EditText editText_referencia;
 
     private String taxa;
-
     private double taxaDeEntrega = 0;
 
-    //private Button button_pagarAgoraCartao;
     private Button button_pagarPessoalmenteCartao;
     private Button button_pagarPessoalmenteDinheiro;
 
@@ -108,16 +106,14 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         editText_contato.addTextChangedListener(MaskEditText.mask(editText_contato, "(##)#####-####"));
         editText_contato.setFilters(new InputFilter[]{new InputFilter.LengthFilter(14)});
 
-        //button_pagarAgoraCartao = findViewById(R.id.button_pedidoReceber_pagarAgoraCartao);
         button_pagarPessoalmenteCartao = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteCartao);
         button_pagarPessoalmenteDinheiro = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteDinheiro);
 
-        //button_pagarAgoraCartao.setOnClickListener(this);
         button_recuperarDadosUsuario.setOnClickListener(this);
         button_pagarPessoalmenteCartao.setOnClickListener(this);
         button_pagarPessoalmenteDinheiro.setOnClickListener(this);
 
-        firestore = FirebaseFirestore.getInstance();
+        //Alteração da taxa de entrega
         firestore.collection("app").document("taxa").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -165,10 +161,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                 buttonCarregarDadosUsuario();
                 break;
 
-            //case R.id.button_pedidoReceber_pagarAgoraCartao:
-            //    buttonPagarCartao();
-            //    break;
-
             case R.id.button_pedidoReceber_pagarPessoalmenteCartao:
                 buttonPagarPessoalmenteCartao();
                 break;
@@ -210,64 +202,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
             }
         });
     }
-
-
-    private void buttonPagarCartao(){
-
-        String nome = editText_nome.getText().toString();
-        String contato = editText_contato.getText().toString();
-        String endereco = editText_endereco.getText().toString();
-        String referencia = editText_referencia.getText().toString();
-
-        if( nome.trim().isEmpty() || contato.trim().isEmpty() || endereco.trim().isEmpty() || referencia.trim().isEmpty() ){
-            Toast.makeText(getBaseContext(),"Preencha os dados para entrega",Toast.LENGTH_LONG).show();
-        }else{
-            if (Util.statusInternet_MoWi(getBaseContext())){
-                salvarDadosUsuarioPagamentoCartaoFirebase(nome,contato,endereco, referencia);
-            }else{
-                Toast.makeText(getBaseContext(),"Sem conexão com a internet",Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-
-    private void salvarDadosUsuarioPagamentoCartaoFirebase(String nome,String contato, String endereco, String referencia){
-        DialogProgress dialogProgress = new DialogProgress();
-        dialogProgress.show(getSupportFragmentManager(),"1");
-
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        HashMap<String,Object> dadosUsuarios = new HashMap<>();
-
-        dadosUsuarios.put("nome",nome);
-        dadosUsuarios.put("contato",contato);
-        dadosUsuarios.put("endereco",endereco);
-        dadosUsuarios.put("referencia",referencia);
-
-        DocumentReference reference = firestore.collection("usuarios").document(uid);
-
-        reference.set(dadosUsuarios).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                dialogProgress.dismiss();
-                if(task.isSuccessful()){
-
-                    Intent intent = new Intent(getBaseContext(),PagarCartaoCreditoActivity.class);
-
-                    intent.putExtra("nome",nome);
-                    intent.putExtra("contato",contato);
-                    intent.putExtra("endereco",endereco +" - "+referencia);
-                    startActivity(intent);
-
-                    //  obterToken(nome, contato, endereco, referencia);
-                }else{
-                    Toast.makeText(getBaseContext(),"Erro ao Salvar Dados: "+task.getException().toString(),Toast.LENGTH_LONG).show();
-                    finish();
-                }
-            }
-        });
-    }
-
 
     private void buttonPagarPessoalmenteCartao(){
         String nome = editText_nome.getText().toString();
@@ -670,7 +604,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         String valorTotalString = decimalFormat.format(valorTotal);
         return valorTotalString;
-
     }
 
 

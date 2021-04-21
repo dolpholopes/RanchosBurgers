@@ -140,7 +140,7 @@ public class AdicionaisActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void adicionalOnClick(Adicional adicional, boolean statusCheckBox, CheckBox checkBox) {
 
-        if (adicionaisSelecionados.size() < 2 || !statusCheckBox) {
+        if (adicionaisSelecionados.size() < 15 || !statusCheckBox) {
 
             if (statusCheckBox) {
                 adicionaisSelecionados.add(adicional);

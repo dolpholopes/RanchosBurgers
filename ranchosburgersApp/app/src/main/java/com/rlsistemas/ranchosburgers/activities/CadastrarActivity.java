@@ -129,6 +129,8 @@ public class CadastrarActivity extends AppCompatActivity implements View.OnClick
                 }).setNegativeButton("Receber pedido em casa", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                        startActivity(new Intent(getBaseContext(), PedidoReceberEmCasaActivity.class));
 
                     }
                 }).setNeutralButton("Voltar para o carrinho", new DialogInterface.OnClickListener() {

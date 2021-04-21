@@ -130,7 +130,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 }).setNegativeButton("Receber pedido em casa", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        finish();
+                        startActivity(new Intent(getBaseContext(), PedidoReceberEmCasaActivity.class));
                     }
                 }).setNeutralButton("Voltar para o carrinho", new DialogInterface.OnClickListener() {
                     @Override

@@ -16,10 +16,6 @@
         android:theme="@style/Theme.RanchosBurgers">
 
         <activity
-            android:name=".activities.PagarCartaoCreditoActivity"
-            android:theme="@style/AppThemNoActionBar" />
-
-        <activity
             android:name=".activities.MainActivity"
             android:theme="@style/AppThemNoActionBar" />
         <activity

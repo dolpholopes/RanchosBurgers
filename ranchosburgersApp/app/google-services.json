@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "57980086267-s3gsbusbgmogos01h34t231n9i8rq98i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rlsistemas.ranchosburgers",
+            "certificate_hash": "6c459fb36f15a55e7242947c315487c810016ac4"
+          }
+        },
+        {
           "client_id": "57980086267-db6j9e44ud35hu0om1t03dbit3f6560c.apps.googleusercontent.com",
           "client_type": 3
         }

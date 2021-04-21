@@ -167,9 +167,7 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
                 }).setNegativeButton("Receber pedido em casa", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         startActivity(new Intent(getBaseContext(), PedidoReceberEmCasaActivity.class));
-
                     }
                 }).create();
 
