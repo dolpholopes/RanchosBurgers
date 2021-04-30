@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="15dp"
-                android:text="Continuar para pagar"
+                android:text="Finalizar Pedido"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="15sp"

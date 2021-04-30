@@ -30,6 +30,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -81,8 +82,9 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
     private String taxa;
     private double taxaDeEntrega = 0;
 
-    private Button button_pagarPessoalmenteCartao;
-    private Button button_pagarPessoalmenteDinheiro;
+    private CardView button_pagarPessoalmenteCartao;
+    private CardView button_pagarPessoalmenteDinheiro;
+    private CardView button_retirarLocal;
 
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     ;
@@ -95,8 +97,6 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
         configToolbar();
 
-        //dialogoAlertaTaxa();
-
         button_recuperarDadosUsuario = findViewById(R.id.button_pedidoReceber_carregarDadosUsuario);
         editText_nome = findViewById(R.id.editText_pedidoReceber_usuarioNome);
         editText_contato = findViewById(R.id.editText_pedidoReceber_usuarioTelefone);
@@ -108,10 +108,12 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
         button_pagarPessoalmenteCartao = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteCartao);
         button_pagarPessoalmenteDinheiro = findViewById(R.id.button_pedidoReceber_pagarPessoalmenteDinheiro);
+        button_retirarLocal = findViewById(R.id.button_pedidoReceber_retirarLocal);
 
         button_recuperarDadosUsuario.setOnClickListener(this);
         button_pagarPessoalmenteCartao.setOnClickListener(this);
         button_pagarPessoalmenteDinheiro.setOnClickListener(this);
+        button_retirarLocal.setOnClickListener(this);
 
         //Alteração da taxa de entrega
         firestore.collection("app").document("taxa").get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -120,9 +122,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
                 taxa = (String) documentSnapshot.getData().get("taxa");
                 taxaDeEntrega = Double.parseDouble(taxa);
             }
-
         });
-
     }
 
     private void dialogoAlertaTaxa(){
@@ -144,7 +144,7 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         TextView textView = findViewById(R.id.textView_toolbar);
-        textView.setText("Receber pedido em casa");
+        textView.setText("Finalizar Pedido");
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -167,6 +167,11 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
             case R.id.button_pedidoReceber_pagarPessoalmenteDinheiro:
                 buttonPagarPessoalmenteDinheiro();
+                break;
+
+            case R.id.button_pedidoReceber_retirarLocal:
+                //startActivity(new Intent(getBaseContext(), RetirarLocalActivity.class));
+                buttonRetirarLocal();
                 break;
         }
     }
@@ -560,6 +565,130 @@ public class PedidoReceberEmCasaActivity extends AppCompatActivity implements Vi
 
         dialog.show();
     }
+
+
+    private void buttonRetirarLocal(){
+        String nome = editText_nome.getText().toString();
+        String contato = editText_contato.getText().toString();
+        String forma_pagamento = "<b> Retirada no local <b>";
+
+        if (nome.trim().isEmpty() || contato.trim().isEmpty()){
+            Toast.makeText(getBaseContext(), "Preencha os dados obrigatorios para finalizar o pedido", Toast.LENGTH_SHORT).show();
+        }else{
+            if (Util.statusInternet_MoWi(getBaseContext())){
+                confirmarPedidoRetirarLocal(nome,contato,forma_pagamento);
+            }else{
+                Toast.makeText(getBaseContext(), (R.string.sem_conexao), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private void confirmarPedidoRetirarLocal(String nome, String contato, String forma_pagamento){
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Confirmar Pedido")
+                .setMessage("\nGostaria de realizar o pedido?")
+                .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        salvarDadosUsuarioRetirarLocalFirebase(nome, contato, forma_pagamento);
+                    }
+                }).create();
+        dialog.show();
+    }
+    private void salvarDadosUsuarioRetirarLocalFirebase(String nome, String contato, String forma_pagamento){
+
+        DialogProgress dialogProgress = new DialogProgress();
+        dialogProgress.show(getSupportFragmentManager(),"1");
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        HashMap<String,Object> dadosUsuarios = new HashMap<>();
+        dadosUsuarios.put("nome", nome);
+        dadosUsuarios.put("contato", contato);
+
+        DocumentReference reference = firestore.collection("usuarios").document(uid);
+
+        reference.set(dadosUsuarios).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                dialogProgress.dismiss();
+                if (task.isSuccessful()){
+                    obterToken2(nome, contato, forma_pagamento);
+                }else{
+                    Toast.makeText(getBaseContext(), "Erro ao salvar os dados: "+ task.getException().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    private void obterToken2(String nome, String contato, String forma_pagamento){
+        DialogProgress dialogProgress = new DialogProgress();
+        dialogProgress.show(getSupportFragmentManager(),"2");
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(
+                new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        dialogProgress.dismiss();
+                        if (task.isSuccessful()){
+                            String token = task.getResult().getToken();
+                            salvarPedidoFirebaseRetirarLocal(nome, contato, forma_pagamento, token);
+                        }else{
+                            String erro = "Sem token";
+                            salvarPedidoFirebaseRetirarLocal(nome, contato, forma_pagamento, erro);
+                        }
+                    }
+                });
+    }
+    private void salvarPedidoFirebaseRetirarLocal(String nome,String  contato, String forma_pagamento,String  token){
+        DialogProgress dialogProgress = new DialogProgress();
+        dialogProgress.show(getSupportFragmentManager(),"3");
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        String idPedido = firestore.collection("pedidos").document().getId();
+        String totalValorProdutos = valorTotalProdutos();
+
+        long data = Timestamp.now().toDate().getTime();
+
+        String todosProdutos = "";
+
+        for (Produto produto: Carrinho.getInstance().getProdutosCarrinho()){
+            todosProdutos = todosProdutos + produto.getNome() + " <br> " +
+                    produto.getAdicional() + " <br> " +
+                    produto.getObservacao() + " <br><br> ";
+        }
+
+        HashMap<String, Object> dadosPedido = new HashMap<>();
+        dadosPedido.put("cliente_contato",contato);
+        dadosPedido.put("cliente_endereco",forma_pagamento);
+        dadosPedido.put("cliente_nome",nome);
+        dadosPedido.put("cliente_uid",uid);
+
+        dadosPedido.put("pedido_dados",todosProdutos);
+        dadosPedido.put("pedido_data", data);
+        dadosPedido.put("pedido_forma_pagamento",forma_pagamento);
+
+        dadosPedido.put("pedido_id",idPedido);
+        dadosPedido.put("pedido_status","em andamento");
+        dadosPedido.put("pedido_valor",totalValorProdutos);
+        dadosPedido.put("token_msg",token);
+
+        DocumentReference reference = firestore.collection("pedidos").document(idPedido);
+        String finalTotalProdutos = todosProdutos;
+        reference.set(dadosPedido).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                dialogProgress.dismiss();
+                if (task.isSuccessful()){
+                    dialogExibirPdf(idPedido,nome,data, finalTotalProdutos,totalValorProdutos);
+                }else{
+                    Toast.makeText(getBaseContext(), "Erro ao salvar o pedido", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

@@ -149,7 +149,7 @@ public class CarrinhoActivity extends AppCompatActivity implements View.OnClickL
         }else{
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null){
-                dialogoOpcaoPagamento();
+                startActivity(new Intent(this, PedidoReceberEmCasaActivity.class));
             }else{
                 startActivity(new Intent(this, LoginActivity.class));
             }
